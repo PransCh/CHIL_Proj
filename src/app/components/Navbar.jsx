@@ -1,4 +1,4 @@
-"use client";
+
  
 import React, { useState, useEffect } from "react";
 import {
@@ -117,18 +117,22 @@ const Navbar = ({ toggleTheme, mode }) => {
   const [language, setLanguage] = useState("en");
   const [notifications, setNotifications] = useState([]);
   const router = useRouter();
- 
+    
+  const UserName = localStorage.getItem('User Name');
+  const UserEmail = localStorage.getItem('User Email');
+  const UserTeam = localStorage.getItem('User Team');
+
   const user = {
-    name: "John Doe",
-    role: "Admin",
-    email: "john.doe@example.com",
-    avatar: "/static/images/avatar.jpg",
+    name: UserName,
+    team: UserTeam,
+    email: UserEmail,
+    avatar: "user.png",
   };
  
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("/api/notifications");
+        const response = await fetch("api/notifications");
         const data = await response.json();
         setNotifications(data);
       } catch (error) {
@@ -162,6 +166,14 @@ const Navbar = ({ toggleTheme, mode }) => {
   const handleNotificationYes = () => {
     router.push("/notifications");
     handleNotificationsClose();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('User Name');
+    localStorage.removeItem('User Team');
+    localStorage.removeItem('User Email');
+    router.push('/login');
   };
  
   return (
@@ -339,7 +351,7 @@ const Navbar = ({ toggleTheme, mode }) => {
                   {user.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#fff" }}>
-                  {user.role}
+                  {user.team}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#fff" }}>
                   {user.email}
@@ -347,7 +359,7 @@ const Navbar = ({ toggleTheme, mode }) => {
               </Box>
             </MenuItem>
             <MenuItem
-              onClick={handleClose}
+              onClick={handleLogout}
               sx={{
                 color: "#fff",
                 "&:hover": {

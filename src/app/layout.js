@@ -3,8 +3,8 @@
 import { useState, useMemo } from "react";
 import { ThemeProvider, CssBaseline ,Box } from "@mui/material";
 import getTheme from "./theme";
-import Navbar from "../../components/navbar";// Adjust path
-import Sidebar from "../../components/sidebar";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
  
  
 export default function RootLayout({ children }) {

@@ -23,7 +23,7 @@ const sidebarItems = [
   },
   {
     name: "Submitted Assigned Ideas",
-    icon: "/clipboard (1).png",
+    icon: "/clipboard.png",
     path: "/page2",
   },
   {

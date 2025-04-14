@@ -15,9 +15,6 @@ export default function Home() {
 
   return (
     <div>
-        <Navbar/>
-      <Sidebar/>
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }

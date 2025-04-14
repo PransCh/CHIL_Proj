@@ -46,7 +46,10 @@ export default function LoginForm() {
       if (data.success) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("User Name", data.user.name);
-        router.push("/home");
+        localStorage.setItem("User Email", data.user.email);
+        localStorage.setItem("User Team", data.user.UserTeam);
+        
+        router.push("/");
       } else {
         setError(data.message || "Invalid email or password. Please try again.");
       }
