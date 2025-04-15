@@ -1,21 +1,23 @@
 "use client";
- 
+
 import { useState, useMemo } from "react";
-import { ThemeProvider, CssBaseline ,Box } from "@mui/material";
+import { ThemeProvider, CssBaseline, Box } from "@mui/material";
 import getTheme from "./theme";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
- 
- 
+import PostsCount from "./components/PostsCount";
+import PostTable from "./components/PostTable";
+
+
 export default function RootLayout({ children }) {
   const [mode, setMode] = useState("light");
- 
+
   const theme = useMemo(() => getTheme(mode), [mode]);
- 
+
   const toggleTheme = () => {
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
- 
+
   return (
     <html lang="en">
       <body>
@@ -29,6 +31,13 @@ export default function RootLayout({ children }) {
             </Box>
           </Box>
         </ThemeProvider>
+
+        <div style={{ marginTop: '0px', marginLeft: '80px', padding: '5px' }}>
+          <PostsCount />
+
+          <PostTable />
+
+        </div>
       </body>
     </html>
   );

@@ -28,3 +28,5 @@ export const getConnection = async () => {
   }
   return pool;
 };
+
+export {sql}
