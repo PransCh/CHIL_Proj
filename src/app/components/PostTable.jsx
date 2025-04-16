@@ -1,7 +1,18 @@
-//PostsTable.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, Typography, TextField, MenuItem, Chip, Snackbar, IconButton, Button, Pagination } from '@mui/material';
+import {
+  Card,
+  Typography,
+  TextField,
+  MenuItem,
+  Chip,
+  Snackbar,
+  IconButton,
+  Button,
+  Pagination,
+  Menu,
+  Box,
+} from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PendingIcon from '@mui/icons-material/HourglassEmpty';
@@ -22,6 +33,7 @@ const PostTable = () => {
   const [filters, setFilters] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
  
   useEffect(() => {
     const fetchPosts = async () => {
@@ -51,13 +63,17 @@ const PostTable = () => {
     setPage(1);
   };
  
-  const handleFilterTypeChange = (event) => {
-    const { value } = event.target;
-    if (value && !filters.some(filter => filter.type === value)) {
+  const handleFilterTypeClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+ 
+  const handleFilterTypeSelect = (value) => {
+    if (value && !filters.some((filter) => filter.type === value)) {
       setFilters([...filters, { type: value, value: '' }]);
-    } else if (filters.some(filter => filter.type === value)) {
+    } else if (filters.some((filter) => filter.type === value)) {
       setOpenSnackbar(true);
     }
+    setAnchorEl(null);
   };
  
   const handleFilterValueChange = (index, event) => {
@@ -77,17 +93,21 @@ const PostTable = () => {
     setOpenSnackbar(false);
   };
  
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+ 
   useEffect(() => {
     const applyFilters = () => {
       let filtered = posts;
       console.log('Applying Filters:', filters);
-      filters.forEach(filter => {
+      filters.forEach((filter) => {
         if (filter.type === 'status' && filter.value) {
-          filtered = filtered.filter(post => post.IdeaStatus === filter.value);
+          filtered = filtered.filter((post) => post.IdeaStatus === filter.value);
           console.log('After status filter:', filtered);
         }
         if (filter.type === 'dateModified' && filter.value) {
-          filtered = filtered.filter(post => {
+          filtered = filtered.filter((post) => {
             if (!post.createdAt) return false;
             const postDate = new Date(post.createdAt);
             const filterDate = new Date(filter.value);
@@ -96,7 +116,7 @@ const PostTable = () => {
           console.log('After dateModified filter:', filtered);
         }
         if (filter.type === 'domain' && filter.value) {
-          filtered = filtered.filter(post => post.IdeaImpact === filter.value);
+          filtered = filtered.filter((post) => post.IdeaImpact === filter.value);
           console.log('After domain filter:', filtered);
         }
       });
@@ -107,7 +127,6 @@ const PostTable = () => {
     applyFilters();
   }, [filters, posts]);
  
-  // Function to truncate description at the last complete word within 100 characters
   const truncateDescription = (desc) => {
     if (typeof desc !== 'string') return '';
     if (desc.length <= 100) return desc;
@@ -117,7 +136,6 @@ const PostTable = () => {
     let currentLength = 0;
  
     for (const word of words) {
-      // Add 1 for the space that will be added
       if (currentLength + word.length + (result ? 1 : 0) > 100 - 3) {
         break;
       }
@@ -132,51 +150,140 @@ const PostTable = () => {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%', marginBottom: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <FilterListIcon style={{ marginRight: '10px' }} />
-          <Typography variant="h6" component="div" style={{ marginRight: '10px' }}>
-            Filters
-          </Typography>
-          <TextField
-            select
-            label="Add Filter"
-            value=""
-            onChange={handleFilterTypeChange}
-            style={{ marginRight: '10px' }}
-            placeholder="Select Filter"
+          <Button
+            variant="contained"
+            startIcon={<FilterListIcon />}
+            onClick={handleFilterTypeClick}
+            sx={{
+              backgroundColor: '#005C7A',
+              color: 'white',
+              textTransform: 'none',
+              fontSize: '14px',
+              fontWeight: 500,
+              padding: '8px 16px',
+              borderRadius: '8px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              '&:hover': {
+                backgroundColor: '#007A9C',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+              },
+              '&:focus': {
+                outline: '2px solid #004A62',
+                outlineOffset: '2px',
+              },
+            }}
           >
-            <MenuItem value="">
-              <FilterListIcon /> None
+            Add Filter
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            PaperProps={{
+              sx: {
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                mt: 1,
+              },
+            }}
+          >
+            <MenuItem
+              onClick={() => handleFilterTypeSelect('status')}
+              sx={{
+                fontSize: '14px',
+                color: '#333',
+                padding: '10px 20px',
+                '&:hover': {
+                  backgroundColor: '#E6F5FA',
+                },
+              }}
+            >
+              <PendingIcon sx={{ mr: 1, color: '#005C7A' }} /> Status
             </MenuItem>
-            <MenuItem value="status">
-              <PendingIcon /> Status
+            <MenuItem
+              onClick={() => handleFilterTypeSelect('dateModified')}
+              sx={{
+                fontSize: '14px',
+                color: '#333',
+                padding: '10px 20px',
+                '&:hover': {
+                  backgroundColor: '#E6F5FA',
+                },
+              }}
+            >
+              <DateRangeIcon sx={{ mr: 1, color: '#005C7A' }} /> Date Modified
             </MenuItem>
-            <MenuItem value="dateModified">
-              <DateRangeIcon /> Date Modified
+            <MenuItem
+              onClick={() => handleFilterTypeSelect('domain')}
+              sx={{
+                fontSize: '14px',
+                color: '#333',
+                padding: '10px 20px',
+                '&:hover': {
+                  backgroundColor: '#E6F5FA',
+                },
+              }}
+            >
+              <DomainIcon sx={{ mr: 1, color: '#005C7A' }} /> Domain
             </MenuItem>
-            <MenuItem value="domain">
-              <DomainIcon /> Domain
-            </MenuItem>
-          </TextField>
+          </Menu>
         </div>
-        <Typography variant="h5" component="div" style={{ margin: '0 10px' }}>
-          Check out posts
+        <Typography variant="h5" component="div" sx={{ margin: '0 10px', color: '#005C7A', fontWeight: 'bold' }}>
+          CHECK OUT POSTS
         </Typography>
         <AddPostDialog />
       </div>
-      <div style={{ width: '80%', marginTop: '80px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '80%', marginBottom: '10px' }}>
+      <div style={{ width: '80%', marginTop: '20px' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '16px',
+            marginBottom: '16px',
+          }}
+        >
           {filters.map((filter, index) => (
-            <div key={index} style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
               {filter.type === 'status' && (
                 <TextField
                   select
                   label="Status"
                   value={filter.value}
                   onChange={(event) => handleFilterValueChange(index, event)}
-                  style={{ marginRight: '10px' }}
+                  sx={{
+                    minWidth: '150px',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      '& fieldset': {
+                        borderColor: '#005C7A',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#007A9C',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#007A9C',
+                        boxShadow: '0 0 4px rgba(0, 92, 122, 0.3)',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#005C7A',
+                      fontSize: '14px',
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#007A9C',
+                    },
+                  }}
                 >
                   <MenuItem value="">All</MenuItem>
-                  <MenuItem value="Not Completed">Not Completed</MenuItem>
+                  <MenuItem value="Pending">Pending</MenuItem>
                   <MenuItem value="Completed">Completed</MenuItem>
                 </TextField>
               )}
@@ -187,7 +294,30 @@ const PostTable = () => {
                   value={filter.value}
                   onChange={(event) => handleFilterValueChange(index, event)}
                   InputLabelProps={{ shrink: true }}
-                  style={{ marginRight: '10px' }}
+                  sx={{
+                    minWidth: '150px',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      '& fieldset': {
+                        borderColor: '#005C7A',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#007A9C',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#007A9C',
+                        boxShadow: '0 0 4px rgba(0, 92, 122, 0.3)',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#005C7A',
+                      fontSize: '14px',
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#007A9C',
+                    },
+                  }}
                 />
               )}
               {filter.type === 'domain' && (
@@ -196,7 +326,30 @@ const PostTable = () => {
                   label="Domain"
                   value={filter.value}
                   onChange={(event) => handleFilterValueChange(index, event)}
-                  style={{ marginRight: '10px' }}
+                  sx={{
+                    minWidth: '150px',
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      '& fieldset': {
+                        borderColor: '#005C7A',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#007A9C',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#007A9C',
+                        boxShadow: '0 0 4px rgba(0, 92, 122, 0.3)',
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#005C7A',
+                      fontSize: '14px',
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                      color: '#007A9C',
+                    },
+                  }}
                 >
                   <MenuItem value="">All</MenuItem>
                   <MenuItem value="IT">IT</MenuItem>
@@ -207,11 +360,32 @@ const PostTable = () => {
               <Chip
                 label={`${filter.type}: ${filter.value || 'All'}`}
                 onDelete={() => handleRemoveFilter(index)}
-                style={{ marginLeft: '10px', borderRadius: '16px' }}
+                sx={{
+                  backgroundColor: '#005C7A',
+                  color: 'white',
+                  borderRadius: '16px',
+                  fontSize: '14px',
+                  height: '32px',
+                  '& .MuiChip-label': {
+                    padding: '0 12px',
+                  },
+                  '& .MuiChip-deleteIcon': {
+                    color: 'white',
+                    '&:hover': {
+                      color: '#E6F5FA',
+                      transform: 'scale(1.2)',
+                    },
+                  },
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  '&:hover': {
+                    backgroundColor: '#007A9C',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                  },
+                }}
               />
-            </div>
+            </Box>
           ))}
-        </div>
+        </Box>
         <div style={{ width: '100%', marginTop: '10px', textAlign: 'center' }}>
           {loading ? (
             <PropagateLoader color="#005C7A" />
@@ -221,12 +395,19 @@ const PostTable = () => {
             filteredPosts.slice((page - 1) * rowsPerPage, page * rowsPerPage).map((post, index) => (
               <Card
                 key={index}
-                style={{
+                sx={{
                   padding: '20px',
                   marginBottom: '10px',
                   height: '200px',
                   position: 'relative',
                   backgroundColor: '#E6F5FA',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  transition: 'transform 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    },
                 }}
               >
                 <Button
@@ -234,10 +415,10 @@ const PostTable = () => {
                   onClick={() => alert(`Viewing post: ${post.IdeaTitle}`)}
                   style={{
                     position: 'absolute',
-                    top: '25px',
-                    right: '10px',
+                    top: '85px',
+                    right: '20px',
                     backgroundColor: '#005C7A',
-                    padding: '5px 10px',
+                    padding: '20px 10px',
                     fontSize: '0.8rem',
                     width: '100px',
                     height: '30px',
@@ -245,7 +426,15 @@ const PostTable = () => {
                 >
                   View More
                 </Button>
-                <Typography variant="h6" noWrap style={{ marginRight: '120px' }}>
+                <Typography
+                  variant="h6"
+                  noWrap
+                  style={{
+                    marginRight: '120px',
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
                   {post.IdeaTitle}
                 </Typography>
                 <Typography
@@ -254,11 +443,13 @@ const PostTable = () => {
                   style={{
                     marginTop: '10px',
                     maxWidth: 'calc(100% - 120px)',
+                    width: '100%',
                     display: '-webkit-box',
                     WebkitBoxOrient: 'vertical',
                     WebkitLineClamp: 3,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
+                    textAlign: 'left',
                   }}
                 >
                   {truncateDescription(post.IdeaDesc)}
