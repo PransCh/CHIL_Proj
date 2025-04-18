@@ -1,7 +1,9 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, Typography, Pagination, Box, Button } from '@mui/material';
 import { PropagateLoader } from 'react-spinners';
+import { useLocale } from '../LocaleProvider';
 
 const CompletedTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,6 +11,9 @@ const CompletedTasks = () => {
   const [rowsPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
   const hardcodedEmail = 'Digital Manufacturing';
+
+  const { locale, setLocale } = useLocale();
+  const translations = require(`../../locales/${locale}.json`);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -69,7 +74,7 @@ const CompletedTasks = () => {
             fontWeight: 'bold',
           }}
         >
-          COMPLETED ASSIGNED TASKS
+          {translations?.completedassignedtasks||'COMPLETED ASSIGNED TASKS'}
         </Typography>
         <Box sx={{ width: '100%', mt: 2 }}>
           {loading ? (
@@ -85,7 +90,7 @@ const CompletedTasks = () => {
             </Box>
           ) : Array.isArray(tasks) && tasks.length === 0 ? (
             <Typography variant="body1" color="textSecondary">
-              No completed tasks found.
+              {translations?.nocompletedassignedtasks||'NO COMPLETED ASSIGNED TASKS'}
             </Typography>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -127,7 +132,7 @@ const CompletedTasks = () => {
                       },
                     }}
                   >
-                    View More
+                    {translations?.ViewMore||'View More'}
                   </Button>
                   <Typography
                     variant="h6"

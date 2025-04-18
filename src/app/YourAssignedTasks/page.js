@@ -16,8 +16,8 @@ import {
     TextField,
 } from "@mui/material";
 import { Toaster, toast } from "react-hot-toast";
-import Navbar from "@/app/components/Navbar";
-import Sidebar from "@/app/components/Sidebar";
+import { useLocale } from '../LocaleProvider';
+
 
 const StyledCard = styled(Card)(({ theme }) => ({
     marginBottom: theme.spacing(3),
@@ -115,13 +115,15 @@ const DataPage = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [notes, setNotes] = useState("");
     const itemsPerPage = 5;
+    const { locale } = useLocale();
+    const translations = require(`../../locales/${locale}.json`);
 
     const user = {
         id: 2,
         name: "Chitimella Praneeth",
         role: "Admin",
         email: "chitimellapraneeth@gmail.com",
-        avatar: "/static/images/avatar.jpg",
+        avatar: "user.png",
     };
 
     useEffect(() => {
@@ -241,8 +243,6 @@ const DataPage = () => {
 
     return (
         <div>
-            <Navbar/>
-            <Sidebar/>
             <Box
                 sx={{
                     width: "100%",
@@ -268,11 +268,11 @@ const DataPage = () => {
                         textAlign: "left",
                     }}
                 >
-                    YOUR ASSIGNED TASKS
+                    {translations?.yourassignedtasks||'YOUR ASSIGNED TASKS'}
                 </Typography>
 
                 {dataItems.length === 0 ? (
-                    <Typography sx={{ textAlign: "left" }}>No data available.</Typography>
+                    <Typography sx={{ textAlign: "left" }}>{translations?.nodataavailable||'No data available'}.</Typography>
                 ) : (
                     <>
                         {currentItems.map((item, key) => (
@@ -298,10 +298,10 @@ const DataPage = () => {
                                         }}
                                     >
                                         <Typography variant="body2" color="text.secondary">
-                                            <strong>Impact:</strong> {item.IdeaImpact || "N/A"}
+                                            <strong>{translations?.impact||'Impact'}:</strong> {item.IdeaImpact || "N/A"}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            <strong>Created:</strong> {formatDate(item.CreatedAt)}
+                                            <strong>{translations?.createdby||'Created'}:</strong> {formatDate(item.CreatedAt)}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             <strong>By:</strong>{" "}
@@ -312,7 +312,7 @@ const DataPage = () => {
                                 </CardContent>
                                 <Box sx={{ pr: 2, display: "flex", alignItems: "center" }}>
                                     <StyledButton onClick={() => handleLogDetails(item)}>
-                                        Log Details
+                                        {translations?.logdetails||'Log Details'}
                                     </StyledButton>
                                 </Box>
                             </StyledCard>
@@ -330,7 +330,7 @@ const DataPage = () => {
                                     onClick={handlePrevPage}
                                     disabled={currentPage === 1}
                                 >
-                                    Previous
+                                    {translations?.previous||'Previous'}
                                 </NavigationButton>
                                 {Array.from({ length: totalPages }, (_, index) => index + 1).map(
                                     (page, key) => (
@@ -347,7 +347,7 @@ const DataPage = () => {
                                     onClick={handleNextPage}
                                     disabled={currentPage === totalPages}
                                 >
-                                    Next
+                                    {translations?.next||'Next'}
                                 </NavigationButton>
                             </Box>
                         )}
@@ -375,10 +375,10 @@ const DataPage = () => {
                     </DialogContent>
                     <DialogActions>
                         <StyledDialogButton onClick={handleCloseModal}>
-                            Cancel
+                            {translations?.cancel||'Cancel'}
                         </StyledDialogButton>
                         <StyledDialogButton onClick={handleSubmitNotes}>
-                            Submit
+                           {translations?.submit||'Submit'}
                         </StyledDialogButton>
                     </DialogActions>
                 </StyledDialog>

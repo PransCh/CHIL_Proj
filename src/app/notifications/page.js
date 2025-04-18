@@ -15,6 +15,8 @@ import {
 } from "@mui/material";
  
 import { useRouter } from "next/navigation";
+import { useLocale } from '../LocaleProvider';
+
  
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -101,13 +103,15 @@ const NotificationsPage = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const itemsPerPage = 5;
   const router=useRouter();
+  const { locale, setLocale } = useLocale();
+  const translations = require(`../../locales/${locale}.json`);
  
   const user = {
     id: 2,
     name: "Chitimella Praneeth",
     role: "Admin",
     email: "chitimellapraneeth@gmail.com",
-    avatar: "/static/images/avatar.jpg",
+    avatar: "user.png",
   };
  
   useEffect(() => {
@@ -213,12 +217,12 @@ const NotificationsPage = () => {
           textAlign: "left",
         }}
       >
-        YOUR NOTIFICATIONS
+        {translations?.yournotifications||'YOUR NOTIFICATIONS'}
       </Typography>
  
       {notifications.length === 0 ? (
         <Typography sx={{ textAlign: "left" }}>
-          No notifications available.
+          {translations?.nonotificationsavailable||'NO NOTIFICATIONS AVAILABLE'}
         </Typography>
       ) : (
         <>
@@ -248,7 +252,7 @@ const NotificationsPage = () => {
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">
-                    <strong>Impact:</strong> {notification.IdeaImpact}
+                    <strong>{translations?.impact||'Impact'}</strong> {notification.IdeaImpact}
                   </Typography>
                 </Box>
               </CardContent>
@@ -257,7 +261,7 @@ const NotificationsPage = () => {
                   onClick={() => handleViewMore(notification)}
                   aria-label="View more details"
                 >
-                  View More
+                  {translations?.ViewMore||'View More'}
                 </StyledButton>
               </Box>
             </StyledCard>
@@ -276,7 +280,7 @@ const NotificationsPage = () => {
                 disabled={currentPage === 1}
                 aria-label="Previous page"
               >
-                Previous
+                {translations?.previous||'Previous'}
               </NavigationButton>
               {Array.from({ length: totalPages }, (_, index) => index + 1).map(
                 (page) => (
@@ -295,7 +299,7 @@ const NotificationsPage = () => {
                 disabled={currentPage === totalPages}
                 aria-label="Next page"
               >
-                Next
+                {translations?.next||'Next'}
               </NavigationButton>
             </Box>
           )}
@@ -337,34 +341,34 @@ const NotificationsPage = () => {
                 variant="body1"
                 color="text.secondary"
               >
-                <strong>Answer:</strong>{" "}
+                <strong>{translations?.answer||'Answer'}</strong>{" "}
                 {selectedNotification.IdeaAnswer || "No reply yet"}
               </Typography>
                <Typography
                 variant="body1"
                 color="text.secondary"
               >
-                <strong>Reason Behind Posting The Idea:</strong>{" "}
+                <strong>{translations?.reasonbehindpostingthisidea||'Reason Behind Posting The Idea'}:</strong>{" "}
                 {selectedNotification.IdeaReason}
               </Typography>
               <Typography
                 variant="body1"
                 color="text.secondary"
               >
-                <strong>Impact:</strong> {selectedNotification.IdeaImpact}
+                <strong>{translations?.impact||'Impact'}:</strong> {selectedNotification.IdeaImpact}
               </Typography>
               <Typography
                 variant="body1"
                 color="text.secondary"
               >
-                <strong>Status:</strong> {selectedNotification.IdeaStatus}
+                <strong>{translations?.status||'Status'}</strong> {selectedNotification.IdeaStatus}
               </Typography>
              
               <Typography
                 variant="body1"
                 color="text.secondary"
               >
-                <strong>Posted By:</strong> {selectedNotification.createdUserName}
+                <strong>{translations?.postedby||'Posted By'}</strong> {selectedNotification.createdUserName}
                 {/* {selectedNotification.createdUserEmail
                   ? ` (${selectedNotification.createdUserEmail})`
                   : ""} */}
@@ -377,13 +381,13 @@ const NotificationsPage = () => {
             onClick={handleCloseModal}
             aria-label="Close dialog"
           >
-            Close
+            {translations?.close||'Close'}
           </StyledButton>
           <StyledButton
             onClick={handleGoToDiscussion}
             aria-label="Go to discussion page"
           >
-            Go to Discussion
+            {translations?.gotodiscussions||'Go to Discussion'}
           </StyledButton>
         </DialogActions>
       </StyledDialog>

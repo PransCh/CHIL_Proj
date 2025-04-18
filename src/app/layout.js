@@ -34,10 +34,6 @@ export default function RootLayout({ children, params }) {
             </Box>
           </ThemeProvider>
 
-          <div style={{ marginTop: '0px', marginLeft: '80px', padding: '5px' }}>
-            <PostsCount />
-            <PostTable />
-          </div>
         </body>
       </html>
     </LocaleProvider>

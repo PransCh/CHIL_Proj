@@ -1,5 +1,5 @@
 "use client";
- 
+
 import React, { useState, useEffect } from "react";
 import {
   AppBar,
@@ -22,8 +22,9 @@ import { FaSearch, FaBell, FaSun, FaMoon, FaGlobe } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
- 
- 
+import { useLocale } from '../LocaleProvider';
+
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius * 2,
@@ -40,7 +41,7 @@ const Search = styled("div")(({ theme }) => ({
     width: "30%",
   },
 }));
- 
+
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 1),
   height: "100%",
@@ -50,7 +51,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
 }));
- 
+
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(0.5, 0.5, 0.5, 0),
@@ -61,7 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
- 
+
 const StyledLanguageSelect = styled(Select)(({ theme }) => ({
   fontSize: "0.875rem",
   // backgroundColor:theme.palette.primary.light,
@@ -85,24 +86,24 @@ const StyledLanguageSelect = styled(Select)(({ theme }) => ({
     color: "#fff",
   },
 }));
- 
+
 const NotificationsMenu = styled(Menu)(({ theme }) => ({
   "& .MuiPaper-root": {
     maxHeight: "300px",
     width: "300px",
     backgroundColor: theme.palette.primary.light,
-    color:theme.palette.primary.main ,
+    color: theme.palette.primary.main,
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[3],
   },
 }));
- 
+
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   "&:hover": {
     backgroundColor: theme.palette.primary.darkblue, // #E6F5FA
   },
 }));
- 
+
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   justifyContent: "center",
@@ -113,21 +114,35 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
   minWidth: "100px",
 }));
- 
+
 const Navbar = ({ toggleTheme, mode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
-  const [language, setLanguage] = useState("en");
   const [notifications, setNotifications] = useState([]);
   const router = useRouter();
- 
+  const [newLang, setNewLang]= useState('en')
+
+  const { locale, setLocale } = useLocale();
+
+  const UserName = localStorage.getItem('User Name');
+  const UserEmail = localStorage.getItem('User Email');
+  const UserTeam = localStorage.getItem('User Team');
+
   const user = {
-    name: "John Doe",
-    role: "Admin",
-    email: "john.doe@example.com",
-    avatar: "/static/images/avatar.jpg",
+    name: UserName,
+    team: UserTeam,
+    email: UserEmail,
+    avatar: "user.png",
   };
- 
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('User Name');
+    localStorage.removeItem('User Team');
+    localStorage.removeItem('User Email');
+    router.push('/login');
+  };
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -138,35 +153,36 @@ const Navbar = ({ toggleTheme, mode }) => {
         console.error("Failed to fetch notifications:", error);
       }
     };
- 
+
     fetchNotifications();
   }, []);
- 
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
- 
+
   const handleClose = () => {
     setAnchorEl(null);
   };
- 
+
   const handleNotificationsMenu = (event) => {
     setNotificationsAnchorEl(event.currentTarget);
   };
- 
+
   const handleNotificationsClose = () => {
     setNotificationsAnchorEl(null);
   };
- 
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
+
+  const handleLanguageChange = (locale) => {
+    setLocale(locale);
+    setNewLang(locale)
   };
- 
+
   const handleNotificationYes = () => {
     router.push("/notifications");
     handleNotificationsClose();
   };
- 
+
   return (
     <AppBar position="fixed" sx={{ height: "56px" }}>
       <Toolbar sx={{ minHeight: "56px", alignItems: "center" }}>
@@ -181,9 +197,9 @@ const Navbar = ({ toggleTheme, mode }) => {
             />
           </Link>
         </Typography>
- 
+
         <Box sx={{ flexGrow: 1 }} />
- 
+
         <Search>
           <SearchIconWrapper>
             <FaSearch />
@@ -193,16 +209,16 @@ const Navbar = ({ toggleTheme, mode }) => {
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
- 
+
         <Box sx={{ flexGrow: 1 }} />
- 
+
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Tooltip title={mode === "dark" ? "Light Mode" : "Dark Mode"}>
             <StyledIconButton onClick={toggleTheme} color="inherit">
               {mode === "dark" ? <FaSun /> : <FaMoon />}
             </StyledIconButton>
           </Tooltip>
- 
+
           <Tooltip title="Notifications">
             <StyledIconButton color="inherit" onClick={handleNotificationsMenu}>
               <Badge badgeContent={notifications.length} color="secondary">
@@ -211,7 +227,7 @@ const Navbar = ({ toggleTheme, mode }) => {
             </StyledIconButton>
           </Tooltip>
           <NotificationsMenu
-            sx={{ marginTop:" 7px" }}
+            sx={{ marginTop: " 7px" }}
             anchorEl={notificationsAnchorEl}
             open={Boolean(notificationsAnchorEl)}
             onClose={handleNotificationsClose}
@@ -254,11 +270,10 @@ const Navbar = ({ toggleTheme, mode }) => {
               </StyledMenuItem>
             </Box>
           </NotificationsMenu>
- 
+
           <FormControl sx={{ minWidth: 80 }}>
             <StyledLanguageSelect
-              value={language}
-              onChange={handleLanguageChange}
+              value={newLang}
               displayEmpty
               renderValue={(selected) => (
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -268,28 +283,6 @@ const Navbar = ({ toggleTheme, mode }) => {
               )}
             >
               <MenuItem
-                value="en"
-                sx={{
-                  color: "#fff",
-                  "&:hover": {
-                    backgroundColor: (theme) => theme.palette.primary.darkblue,
-                  },
-                }}
-              >
-                English
-              </MenuItem>
-              <MenuItem
-                value="es"
-                sx={{
-                  color: "#fff",
-                  "&:hover": {
-                    backgroundColor: (theme) => theme.palette.primary.darkblue,
-                  },
-                }}
-              >
-                Spanish
-              </MenuItem>
-              <MenuItem
                 value="fr"
                 sx={{
                   color: "#fff",
@@ -297,12 +290,26 @@ const Navbar = ({ toggleTheme, mode }) => {
                     backgroundColor: (theme) => theme.palette.primary.darkblue,
                   },
                 }}
+                onClick={() => handleLanguageChange('fr')} // Wrap in arrow function
               >
                 French
               </MenuItem>
+
+              <MenuItem
+                value="en"
+                sx={{
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.darkblue,
+                  },
+                }}
+                onClick={() => handleLanguageChange('en')} // Wrap in arrow function
+              >
+                English
+              </MenuItem>
             </StyledLanguageSelect>
           </FormControl>
- 
+
           <Tooltip title="Profile">
             <StyledIconButton onClick={handleMenu} color="inherit">
               <Avatar alt={user.name} src={user.avatar} />
@@ -350,7 +357,7 @@ const Navbar = ({ toggleTheme, mode }) => {
               </Box>
             </MenuItem>
             <MenuItem
-              onClick={handleClose}
+              onClick={handleLogout}
               sx={{
                 color: "#fff",
                 "&:hover": {
@@ -366,6 +373,5 @@ const Navbar = ({ toggleTheme, mode }) => {
     </AppBar>
   );
 };
- 
+
 export default Navbar;
- 

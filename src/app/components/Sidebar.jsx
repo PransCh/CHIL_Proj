@@ -24,7 +24,7 @@ const sidebarItems = [
   {
     name: "Submitted Assigned Ideas",
     icon: "/clipboard.png",
-    path: "/assignedideas",
+    path: "/CompletedTasks",
   },
   {
     name: "Your Posted Ideas",
