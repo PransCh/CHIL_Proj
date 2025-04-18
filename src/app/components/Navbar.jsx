@@ -1,3 +1,5 @@
+"use client";
+ 
 import React, { useState, useEffect } from "react";
 import {
   AppBar,
@@ -14,17 +16,14 @@ import {
   Select,
   FormControl,
   styled,
-  Button,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { FaSearch, FaBell, FaSun, FaMoon, FaGlobe } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { useLocale } from "../LocaleProvider";
-
-
+ 
+ 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius * 2,
@@ -41,7 +40,7 @@ const Search = styled("div")(({ theme }) => ({
     width: "30%",
   },
 }));
-
+ 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 1),
   height: "100%",
@@ -51,7 +50,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
 }));
-
+ 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   "& .MuiInputBase-input": {
     padding: theme.spacing(0.5, 0.5, 0.5, 0),
@@ -62,9 +61,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-
+ 
 const StyledLanguageSelect = styled(Select)(({ theme }) => ({
   fontSize: "0.875rem",
+  // backgroundColor:theme.palette.primary.light,
   borderRadius: theme.shape.borderRadius,
   "& .MuiSelect-select": {
     padding: theme.spacing(0.5, 3, 0.5, 1),
@@ -85,25 +85,26 @@ const StyledLanguageSelect = styled(Select)(({ theme }) => ({
     color: "#fff",
   },
 }));
-
+ 
 const NotificationsMenu = styled(Menu)(({ theme }) => ({
   "& .MuiPaper-root": {
     maxHeight: "300px",
     width: "300px",
-    backgroundColor: theme.palette.background.paper,
-    color: "#fff",
+    backgroundColor: theme.palette.primary.light,
+    color:theme.palette.primary.main ,
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[3],
   },
 }));
-
+ 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   "&:hover": {
     backgroundColor: theme.palette.primary.darkblue, // #E6F5FA
   },
 }));
-
+ 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
   justifyContent: "center",
   color: "#fff",
   padding: theme.spacing(1, 2),
@@ -112,81 +113,62 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   },
   minWidth: "100px",
 }));
-
+ 
 const Navbar = ({ toggleTheme, mode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
-  const [language, setLanguage] = useState('English');
+  const [language, setLanguage] = useState("en");
   const [notifications, setNotifications] = useState([]);
   const router = useRouter();
-
-  const UserName = localStorage.getItem('User Name');
-  const UserEmail = localStorage.getItem('User Email');
-  const UserTeam = localStorage.getItem('User Team');
-
+ 
   const user = {
-    name: UserName,
-    team: UserTeam,
-    email: UserEmail,
-    avatar: "user.png",
+    name: "John Doe",
+    role: "Admin",
+    email: "john.doe@example.com",
+    avatar: "/static/images/avatar.jpg",
   };
-
+ 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("api/notifications");
+        const response = await fetch("/api/notifications");
         const data = await response.json();
         setNotifications(data);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
       }
     };
-
+ 
     fetchNotifications();
   }, []);
-
+ 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
+ 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+ 
   const handleNotificationsMenu = (event) => {
     setNotificationsAnchorEl(event.currentTarget);
   };
-
+ 
   const handleNotificationsClose = () => {
     setNotificationsAnchorEl(null);
   };
-
-
-
-  const { locale, setLocale } = useLocale();
-
-  const handleLanguageChange = (locale) => {
-    setLocale(locale);
+ 
+  const handleLanguageChange = (event) => {
+    setLanguage(event.target.value);
   };
-
-
-
-
+ 
   const handleNotificationYes = () => {
     router.push("/notifications");
     handleNotificationsClose();
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('User Name');
-    localStorage.removeItem('User Team');
-    localStorage.removeItem('User Email');
-    router.push('/login');
-  };
-
+ 
   return (
-    <AppBar position="static" sx={{ height: "56px" }}>
+    <AppBar position="fixed" sx={{ height: "56px" }}>
       <Toolbar sx={{ minHeight: "56px", alignItems: "center" }}>
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 0 }}>
           <Link href="/" passHref>
@@ -199,9 +181,9 @@ const Navbar = ({ toggleTheme, mode }) => {
             />
           </Link>
         </Typography>
-
+ 
         <Box sx={{ flexGrow: 1 }} />
-
+ 
         <Search>
           <SearchIconWrapper>
             <FaSearch />
@@ -211,16 +193,16 @@ const Navbar = ({ toggleTheme, mode }) => {
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
-
+ 
         <Box sx={{ flexGrow: 1 }} />
-
+ 
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Tooltip title={mode === "dark" ? "Light Mode" : "Dark Mode"}>
             <StyledIconButton onClick={toggleTheme} color="inherit">
               {mode === "dark" ? <FaSun /> : <FaMoon />}
             </StyledIconButton>
           </Tooltip>
-
+ 
           <Tooltip title="Notifications">
             <StyledIconButton color="inherit" onClick={handleNotificationsMenu}>
               <Badge badgeContent={notifications.length} color="secondary">
@@ -229,7 +211,7 @@ const Navbar = ({ toggleTheme, mode }) => {
             </StyledIconButton>
           </Tooltip>
           <NotificationsMenu
-            sx={{ marginTop: " 7px" }}
+            sx={{ marginTop:" 7px" }}
             anchorEl={notificationsAnchorEl}
             open={Boolean(notificationsAnchorEl)}
             onClose={handleNotificationsClose}
@@ -245,11 +227,11 @@ const Navbar = ({ toggleTheme, mode }) => {
             <MenuItem
               disabled
               sx={{
-                color: "#fff",
+                color: '#005C7A',
                 justifyContent: "center",
                 "&.Mui-disabled": {
                   opacity: 1,
-                  color: "#fff",
+                  color: '#005C7A',
                 },
                 padding: (theme) => theme.spacing(2),
               }}
@@ -272,10 +254,55 @@ const Navbar = ({ toggleTheme, mode }) => {
               </StyledMenuItem>
             </Box>
           </NotificationsMenu>
-
-          <button onClick={() => handleLanguageChange('fr')}>French</button>
-          <button onClick={() => handleLanguageChange('en')}>English</button>
-
+ 
+          <FormControl sx={{ minWidth: 80 }}>
+            <StyledLanguageSelect
+              value={language}
+              onChange={handleLanguageChange}
+              displayEmpty
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <FaGlobe style={{ marginRight: "8px" }} />
+                  {selected.toUpperCase()}
+                </Box>
+              )}
+            >
+              <MenuItem
+                value="en"
+                sx={{
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.darkblue,
+                  },
+                }}
+              >
+                English
+              </MenuItem>
+              <MenuItem
+                value="es"
+                sx={{
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.darkblue,
+                  },
+                }}
+              >
+                Spanish
+              </MenuItem>
+              <MenuItem
+                value="fr"
+                sx={{
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: (theme) => theme.palette.primary.darkblue,
+                  },
+                }}
+              >
+                French
+              </MenuItem>
+            </StyledLanguageSelect>
+          </FormControl>
+ 
           <Tooltip title="Profile">
             <StyledIconButton onClick={handleMenu} color="inherit">
               <Avatar alt={user.name} src={user.avatar} />
@@ -315,7 +342,7 @@ const Navbar = ({ toggleTheme, mode }) => {
                   {user.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#fff" }}>
-                  {user.team}
+                  {user.role}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#fff" }}>
                   {user.email}
@@ -323,7 +350,7 @@ const Navbar = ({ toggleTheme, mode }) => {
               </Box>
             </MenuItem>
             <MenuItem
-              onClick={handleLogout}
+              onClick={handleClose}
               sx={{
                 color: "#fff",
                 "&:hover": {
@@ -339,6 +366,6 @@ const Navbar = ({ toggleTheme, mode }) => {
     </AppBar>
   );
 };
-
+ 
 export default Navbar;
-
+ 

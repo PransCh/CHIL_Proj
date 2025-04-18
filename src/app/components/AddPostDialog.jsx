@@ -3,6 +3,8 @@
  
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, MenuItem } from '@mui/material';
+import { useLocale } from '../LocaleProvider';
+
  
 const AddPostDialog = () => {
   const [open, setOpen] = useState(false);
@@ -11,6 +13,8 @@ const AddPostDialog = () => {
   const [reason, setReason] = useState('');
   const [impact, setImpact] = useState('');
   const [error, setError] = useState('');
+  const { locale } = useLocale();
+  const translations = require(`../../locales/${locale}.json`);
  
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -56,7 +60,7 @@ const AddPostDialog = () => {
   return (
     <div>
       <Button variant="contained" onClick={handleClickOpen} style={{ backgroundColor: '#005C7A', marginTop: '20px', marginBottom: '20px' }}>
-        Add New Post
+        {translations?.ADDNEWPOST||'Add New Post'}
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Post</DialogTitle>

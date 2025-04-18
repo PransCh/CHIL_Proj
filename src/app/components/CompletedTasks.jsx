@@ -2,28 +2,31 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, Typography, Pagination, Box, Button } from '@mui/material';
 import { PropagateLoader } from 'react-spinners';
- 
+
 const CompletedTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
   const hardcodedEmail = 'Digital Manufacturing';
- 
+
   useEffect(() => {
     const fetchTasks = async () => {
       setLoading(true);
       try {
-        console.log()
-
-        const response = await fetch("/api/AssignedPosts", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ hardcodedEmail }),
+        const response = await axios.post('/api/assignedposts', {
+          AssignedTeam: hardcodedEmail,
+          Status: 'Completed'
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
- 
+
+        fetch('/api/users/'+123).then(r =>  r.json().then(data => console.log(data)))
+          
         console.log('API Response:', response.data);
- 
+
         if (response.data && Array.isArray(response.data.posts)) {
           setTasks(response.data.posts);
         } else {
@@ -37,22 +40,23 @@ const CompletedTasks = () => {
         setLoading(false);
       }
     };
- 
+
+
     fetchTasks();
   }, []);
- 
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
- 
+
   const handleViewMore = (task) => {
     console.log('View More clicked for task:', task);
   };
- 
+
   const displayedTasks = Array.isArray(tasks)
     ? tasks.slice((page - 1) * rowsPerPage, page * rowsPerPage)
     : [];
- 
+
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
       <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -183,5 +187,5 @@ const CompletedTasks = () => {
     </Box>
   );
 };
- 
+
 export default CompletedTasks;

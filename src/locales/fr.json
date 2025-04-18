@@ -5,5 +5,12 @@
     "CompletedPosts": "Publications terminées",
     "TotalPosts": "Total des publications",
     "ADDNEWPOST": "Ajouter une nouvelle publication",
-    "Add Filter": "Ajouter un filtre"
+    "AddFilter": "Ajouter un filtre",
+    "ViewMore": "Voir plus",
+    "Notifications": "Notifications",
+    "Profile": "Profil",
+    "DarkMode": "Mode sombre",
+    "AssignedIdeas": "Idées assignées",
+    "YourPostedIdeas": "Vos idées publiées",
+    "SubmittedAssignedIdeas": "Idées assignées soumises"
 }

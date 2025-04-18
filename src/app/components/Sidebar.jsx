@@ -19,12 +19,12 @@ const sidebarItems = [
   {
     name: "Assigned Ideas",
     icon: "/list.png", // Assumes /public/list.png
-    path: "/page1",
+    path: "/YourAssignedTasks",
   },
   {
     name: "Submitted Assigned Ideas",
     icon: "/clipboard.png",
-    path: "/page2",
+    path: "/assignedideas",
   },
   {
     name: "Your Posted Ideas",

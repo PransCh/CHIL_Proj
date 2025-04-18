@@ -9,7 +9,7 @@ const config = {
     options: {
       domain: 'sw',
       userName: 'ADMDSCCP2',
-      password: 'UIj]tUN~drd.KWq'
+      password: 'aAz~!Z[z41wVJ*d'
     }
   },
   options: {

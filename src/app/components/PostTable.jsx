@@ -20,6 +20,8 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import DomainIcon from '@mui/icons-material/Domain';
 import AddPostDialog from './AddPostDialog';
 import PropagateLoader from 'react-spinners/PropagateLoader';
+import { useLocale } from '../LocaleProvider';
+
  
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -34,6 +36,9 @@ const PostTable = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const { locale } = useLocale();
+  const translations = require(`../../locales/${locale}.json`);
  
   useEffect(() => {
     const fetchPosts = async () => {
@@ -173,7 +178,7 @@ const PostTable = () => {
               },
             }}
           >
-            Add Filter
+            {translations?.AddFilter||'Add Filter'}
           </Button>
           <Menu
             anchorEl={anchorEl}
@@ -229,7 +234,7 @@ const PostTable = () => {
           </Menu>
         </div>
         <Typography variant="h5" component="div" sx={{ margin: '0 10px', color: '#005C7A', fontWeight: 'bold' }}>
-          CHECK OUT POSTS
+          {translations?.Checkoutposts||'CHECK OUT POSTS'}
         </Typography>
         <AddPostDialog />
       </div>
@@ -424,7 +429,7 @@ const PostTable = () => {
                     height: '30px',
                   }}
                 >
-                  View More
+                  {translations?.ViewMore||'View More'}
                 </Button>
                 <Typography
                   variant="h6"
